@@ -16,7 +16,7 @@ export default function Header() {
 
       <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
         <a 
-          href="/swagger/" 
+          href="https://xenoverify.vercel.app/swagger/" 
           target="_blank" 
           rel="noopener noreferrer"
           className="btn btn-secondary"
