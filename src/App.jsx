@@ -17,9 +17,9 @@ import {
   FileText
 } from 'lucide-react';
 
-const API_BASE = window.location.hostname === 'localhost' && window.location.port === '5173'
-  ? 'http://localhost:8000/api'
-  : '/api';
+import { API_BASE_URL } from './config';
+
+const API_BASE = API_BASE_URL;
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dsrm');
