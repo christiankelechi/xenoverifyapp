@@ -17,12 +17,15 @@ import {
   FileText
 } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = window.location.hostname === 'localhost' && window.location.port === '5173'
+  ? 'http://localhost:8000/api'
+  : '/api';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dsrm');
   const [systemInfo, setSystemInfo] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [processingMessage, setProcessingMessage] = useState('');
 
   // Issuer State
   const [issuer, setIssuer] = useState(null);
@@ -83,6 +86,7 @@ export default function App() {
 
   const handleInitIssuer = async (scheme = 'ML-DSA-65') => {
     setLoading(true);
+    setProcessingMessage(`Generating NIST FIPS 204 ${scheme} keypair (1,952-byte public key)...`);
     try {
       const res = await fetch(`${API_BASE}/issuers/initialize/`, {
         method: 'POST',
@@ -96,11 +100,13 @@ export default function App() {
       alert('Error initializing issuer: ' + e);
     } finally {
       setLoading(false);
+      setProcessingMessage('');
     }
   };
 
   const handleIssueCredential = async () => {
     setLoading(true);
+    setProcessingMessage('Salting attributes, building Merkle tree & signing root with ML-DSA-65...');
     try {
       const res = await fetch(`${API_BASE}/credentials/issue/`, {
         method: 'POST',
@@ -114,17 +120,18 @@ export default function App() {
       const data = await res.json();
       await fetchCredentials();
       setSelectedCred(data);
-      alert('Post-Quantum Credential issued successfully and signed with ML-DSA-65!');
     } catch (e) {
       alert('Error issuing: ' + e);
     } finally {
       setLoading(false);
+      setProcessingMessage('');
     }
   };
 
   const handleGenerateProof = async () => {
     if (!selectedCred) return;
     setLoading(true);
+    setProcessingMessage('Extracting Merkle authentication paths for disclosed claims...');
     setVerificationResult(null);
     setTamperSimulated(false);
     try {
@@ -142,12 +149,14 @@ export default function App() {
       alert('Error generating proof: ' + e);
     } finally {
       setLoading(false);
+      setProcessingMessage('');
     }
   };
 
   const handleVerifyProof = async (tamper = false) => {
     if (!proofPacket) return;
     setLoading(true);
+    setProcessingMessage(tamper ? 'Simulating malicious attribute modification & executing verifier...' : 'Recomputing Merkle root & verifying ML-DSA-65 signature...');
     try {
       let payload = JSON.parse(JSON.stringify(proofPacket));
       if (tamper && payload.disclosed_claims.length > 0) {
@@ -168,11 +177,13 @@ export default function App() {
       setVerificationResult({ valid: false, error: String(e) });
     } finally {
       setLoading(false);
+      setProcessingMessage('');
     }
   };
 
   const handleRunBenchmarks = async () => {
     setLoading(true);
+    setProcessingMessage(`Running ${benchmarkIterations} controlled trials comparing ML-DSA-65 vs ECDSA (this takes ~5-15s)...`);
     try {
       const res = await fetch(`${API_BASE}/benchmarks/run/`, {
         method: 'POST',
@@ -185,6 +196,7 @@ export default function App() {
       alert('Benchmark error: ' + e);
     } finally {
       setLoading(false);
+      setProcessingMessage('');
     }
   };
 
@@ -203,12 +215,30 @@ export default function App() {
         </div>
 
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <a 
+            href="http://localhost:8000/swagger/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="btn btn-secondary"
+            style={{ padding: '6px 14px', fontSize: '12px', textDecoration: 'none' }}
+          >
+            <FileText size={14} /> Swagger API Docs
+          </a>
           <span className="badge badge-cyan">NIST FIPS 204 (ML-DSA-65)</span>
           <span className="badge badge-purple">DSRM Evaluation Engine</span>
         </div>
       </header>
 
+      {/* Real-time Processing Overlay / Loader Banner */}
+      {loading && (
+        <div className="processing-banner">
+          <RefreshCw size={18} className="spinner" />
+          <span>{processingMessage || 'Cryptographic operation in progress. Please wait...'}</span>
+        </div>
+      )}
+
       {/* Tabs */}
+
       <nav className="nav-tabs">
         <button 
           className={`nav-tab-btn ${activeTab === 'dsrm' ? 'active' : ''}`}
@@ -242,10 +272,10 @@ export default function App() {
           <div className="card">
             <div className="card-header">
               <h2 className="card-title"><FileText size={20} color="var(--accent-cyan)" /> DSRM Table 3.1: Scope & Evaluation Treatment</h2>
-              <span className="badge badge-emerald">Dissertation Ground Truth</span>
+              <span className="badge badge-emerald">Research Framework</span>
             </div>
             <p style={{ color: 'var(--text-muted)', marginBottom: '18px', fontSize: '14px' }}>
-              Directly aligned with supervisor feedback: differentiating strictly implemented components from simulated components.
+              Architectural boundary specification distinguishing implemented cryptographic modules from simulated environmental services.
             </p>
 
             <div style={{ overflowX: 'auto' }}>
@@ -600,10 +630,10 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Chapter 4 Summary Box */}
+                {/* Summary Box */}
                 <div className="card" style={{ background: 'rgba(6, 182, 212, 0.05)', borderColor: 'rgba(6, 182, 212, 0.2)' }}>
                   <h3 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '8px', color: 'var(--accent-cyan)' }}>
-                    Dissertation Discussion Ready Findings
+                    Empirical Evaluation & Performance Analysis
                   </h3>
                   <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.6' }}>
                     The empirical evaluation across {benchmarkResult.iterations} controlled trials demonstrates the trade-off boundaries: ML-DSA-65 signatures require 3,293 bytes compared to ECDSA's 71 bytes (a ~46x footprint increase for quantum resilience). However, verification latency remains sub-100ms, making it fully viable for real-time digital identity verification without violating user experience tolerances.
