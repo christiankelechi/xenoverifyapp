@@ -9,7 +9,7 @@ export default function ScopeTab() {
           <h2 className="card-title">
             <FileText size={20} color="var(--accent-cyan)" /> DSRM Table 3.1: Scope & Evaluation Treatment
           </h2>
-          <span className="badge badge-emerald">Research Framework</span>
+          <span className="badge badge-emerald">MRe Research Framework</span>
         </div>
         <p style={{ color: 'var(--text-muted)', marginBottom: '18px', fontSize: '14px' }}>
           Architectural boundary specification distinguishing implemented cryptographic modules from simulated environmental services.
@@ -70,7 +70,7 @@ export default function ScopeTab() {
             <div><strong>Primary Scheme:</strong> ML-DSA-65 (Module-Lattice Digital Signatures)</div>
             <div><strong>Security Level:</strong> Category 3 (Lattice hard problems / Module-LWE)</div>
             <div><strong>Public Key Size:</strong> 1,952 bytes</div>
-            <div><strong>Signature Size:</strong> 3,293 bytes</div>
+            <div><strong>Signature Size:</strong> 3,309 bytes</div>
             <div><strong>Leaf Commitment:</strong> SHA-256 with 128-bit CSPRNG salt</div>
           </div>
         </div>

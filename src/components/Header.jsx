@@ -25,7 +25,7 @@ export default function Header() {
           <FileText size={14} /> Swagger API Docs
         </a>
         <span className="badge badge-cyan">NIST FIPS 204 (ML-DSA-65)</span>
-        <span className="badge badge-purple">DSRM Evaluation Engine</span>
+        <span className="badge badge-purple">MRe DSRM Framework</span>
       </div>
     </header>
   );
