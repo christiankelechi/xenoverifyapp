@@ -25,11 +25,11 @@ export default function App() {
   const [credentials, setCredentials] = useState([]);
   const [selectedCred, setSelectedCred] = useState(null);
   const [newAttrs, setNewAttrs] = useState({
-    fullName: 'Olushola James',
+    fullName: 'Alex Carter',
     nin: '29837492812',
     dob: '1992-06-14',
     nationality: 'Nigerian',
-    clearanceLevel: 'Level-3',
+    clearanceLevel: 'Tier-3',
     residence: 'Victoria Island, Lagos'
   });
 
